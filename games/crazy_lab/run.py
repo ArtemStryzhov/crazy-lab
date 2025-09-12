@@ -1,8 +1,8 @@
 """Main file for generating results for sample ways-pay game."""
 
-from gamestate import GameState
-from game_config import GameConfig
-from game_optimization import OptimizationSetup
+from .gamestate import GameState
+from .game_config import GameConfig
+from .game_optimization import OptimizationSetup
 from optimization_program.run_script import OptimizationExecution
 from utils.game_analytics.run_analysis import create_stat_sheet
 from utils.rgs_verification import execute_all_tests

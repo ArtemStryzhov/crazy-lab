@@ -1,6 +1,6 @@
-from game_calculations import GameCalculations
+from .game_calculations import GameCalculations
 from src.calculations.cluster import Cluster
-from game_events import update_grid_mult_event
+from .game_events import update_grid_mult_event
 from src.events.events import update_freespin_event
 
 

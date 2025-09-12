@@ -1,4 +1,4 @@
-from game_executables import GameExecutables
+from .game_executables import GameExecutables
 
 
 class GameStateOverride(GameExecutables):
