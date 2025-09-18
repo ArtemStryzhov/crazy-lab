@@ -21,7 +21,7 @@ class GameConfig(Config):
         self.game_id = "crazy_lab"
         self.provider_number = 0
         self.working_name = "Crazy Lab"
-        self.wincap = 5000.0
+        self.wincap = 25000.0
         self.win_type = "cluster"
         self.rtp = 0.9700
         self.construct_paths()
