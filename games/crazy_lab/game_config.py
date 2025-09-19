@@ -72,8 +72,8 @@ class GameConfig(Config):
         self.special_symbols = {"wild": ["W"], "scatter": ["S"]}
 
         self.freespin_triggers = {
-            self.basegame_type: {4: 10, 5: 12, 6: 15, 7: 18, 8: 20},
-            self.freegame_type: {3: 5, 4: 8, 5: 10, 6: 12, 7: 15, 8: 18},
+            self.basegame_type: {3: 10, 4: 12, 5: 15, 6: 20, 7: 30},
+            self.freegame_type: {3: 10, 4: 12, 5: 15, 6: 20, 7: 30},
         }
         self.anticipation_triggers = {
             self.basegame_type: min(self.freespin_triggers[self.basegame_type].keys()) - 1,
