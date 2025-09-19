@@ -100,7 +100,7 @@ class GameConfig(Config):
                 distributions=[
                     Distribution(
                         criteria="wincap",
-                        quota=0.001,
+                        quota=0.0001,
                         win_criteria=self.wincap,
                         conditions={
                             "reel_weights": {
@@ -114,7 +114,7 @@ class GameConfig(Config):
                     ),
                     Distribution(
                         criteria="freegame",
-                        quota=0.1,
+                        quota=0.002,
                         conditions={
                             "reel_weights": {
                                 self.basegame_type: {"BR0": 1},
@@ -127,7 +127,7 @@ class GameConfig(Config):
                     ),
                     Distribution(
                         criteria="0",
-                        quota=0.4,
+                        quota=0.7,
                         win_criteria=0.0,
                         conditions={
                             "reel_weights": {self.basegame_type: {"BR0": 1}},
@@ -137,7 +137,7 @@ class GameConfig(Config):
                     ),
                     Distribution(
                         criteria="basegame",
-                        quota=0.5,
+                        quota=0.2979,
                         conditions={
                             "reel_weights": {self.basegame_type: {"BR0": 1}},
                             "force_wincap": False,
@@ -157,7 +157,7 @@ class GameConfig(Config):
                 distributions=[
                     Distribution(
                         criteria="wincap",
-                        quota=0.001,
+                        quota=0.0001,
                         win_criteria=self.wincap,
                         conditions={
                             "reel_weights": {
@@ -191,7 +191,7 @@ class GameConfig(Config):
                     ),
                     Distribution(
                         criteria="freegame",
-                        quota=0.1,
+                        quota=0.01,
                         conditions={
                             "reel_weights": {
                                 self.basegame_type: {"BR0": 1},
