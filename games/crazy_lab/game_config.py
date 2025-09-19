@@ -148,7 +148,7 @@ class GameConfig(Config):
             ),
             BetMode(
                 name="bonus",
-                cost=200,
+                cost=100,
                 rtp=self.rtp,
                 max_win=self.wincap,
                 auto_close_disabled=False,
