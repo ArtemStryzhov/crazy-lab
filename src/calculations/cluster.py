@@ -47,10 +47,9 @@ class Cluster:
         return neighbours
 
     @staticmethod
-    def in_cluster(board: list[list[Symbol]], reel: int, row: int, og_symbol: str, wild_key: str = "wild") -> bool:
-        """Checks if a symbol (including wilds) match cluster type."""
-        if board[reel][row].check_attribute(wild_key) or og_symbol == board[reel][row].name:
-            return True
+    def in_cluster(board: list[list[Symbol]], reel: int, row: int, og_symbol: str) -> bool:
+        """Checks if a symbol matches the cluster type (strict equality, no wild)."""
+        return og_symbol == board[reel][row].name
 
     @staticmethod
     def check_all_neighbours(
@@ -61,12 +60,11 @@ class Cluster:
         reel,
         row,
         og_symbol: str,
-        wild_key: str = "wild",
     ):
-        """Recursively check neighbours for like-symbols."""
+        """Recursively check neighbours for like-symbols (no wild logic)."""
         neighbours = Cluster.get_neighbours(board, reel, row, local_checked)
         for reel_, row_ in neighbours:
-            if Cluster.in_cluster(board, reel_, row_, og_symbol, wild_key):
+            if Cluster.in_cluster(board, reel_, row_, og_symbol):
                 potential_cluster += [(reel_, row_)]
                 already_checked += [(reel_, row_)]
                 Cluster.check_all_neighbours(
@@ -77,17 +75,16 @@ class Cluster:
                     reel_,
                     row_,
                     og_symbol,
-                    wild_key,
                 )
 
     @staticmethod
-    def get_clusters(board: list[list[Symbol]], wild_key: str = "wild") -> dict:
-        """Return all symbol clusters of size >= 1."""
+    def get_clusters(board: list[list[Symbol]]) -> dict:
+        """Return all symbol clusters of size >= 1 (strict symbol equality, no wild)."""
         already_checked = []
         clusters = defaultdict(list)
         for reel, _ in enumerate(board):
             for row, _ in enumerate(board[reel]):
-                if (reel, row) not in already_checked and not (board[reel][row].check_attribute(wild_key)):
+                if (reel, row) not in already_checked:
                     potential_cluster = [(reel, row)]
                     already_checked += [(reel, row)]
                     local_checked = [(reel, row)]
@@ -100,7 +97,6 @@ class Cluster:
                         reel,
                         row,
                         symbol,
-                        wild_key,
                     )
                     clusters[symbol].append(potential_cluster)
 
@@ -165,10 +161,9 @@ class Cluster:
         board: list[list[Symbol]],
         global_multiplier: int,
         multiplier_key: str = "multiplier",
-        wild_key: str = "wild",
     ) -> None:
         """Event-ready win information."""
-        clusters = Cluster.get_clusters(board, wild_key)
+        clusters = Cluster.get_clusters(board)
         return_data = {
             "totalWin": 0,
             "wins": [],

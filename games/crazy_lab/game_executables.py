@@ -36,7 +36,7 @@ class GameExecutables(GameCalculations):
 
     def get_clusters_update_wins(self):
         """Find clusters on board and update win manager."""
-        clusters = Cluster.get_clusters(self.board, "wild")
+        clusters = Cluster.get_clusters(self.board)
         return_data = {
             "totalWin": 0,
             "wins": [],
