@@ -26,20 +26,36 @@ class GameCalculations(Executables):
         """
         exploding_symbols = []
         total_win = 0
+
+        # Локальна функція для конвертації hits → фактичний множник клітинки
+        def hits_to_spot_mult(hits: int) -> int:
+            if hits <= 1:
+                return 0
+            # 1-й вибух → ще немає мульта, 2-й → x2, 3-й → x4, ...
+            val = 2 ** (hits - 1)
+            return min(val, config.maximum_board_mult)
+
         for sym in clusters:
             for cluster in clusters[sym]:
                 syms_in_cluster = len(cluster)
                 if (syms_in_cluster, sym) in config.paytable:
-                    board_mult = 0
+                    # Сума спотових множників (0,2,4,8...) по всіх клітинках кластера
+                    sum_spot_mult = 0
                     for positions in cluster:
-                        board_mult += pos_mult_grid[positions[0]][positions[1]]
-                    board_mult = max(board_mult, 1)
-                    sym_win = config.paytable[(syms_in_cluster, sym)]
-                    symwin_mult = sym_win * board_mult * global_multiplier
-                    total_win += symwin_mult
-                    json_positions = [{"reel": p[0], "row": p[1]} for p in cluster]
+                        r, c = positions[0], positions[1]
+                        hits = pos_mult_grid[r][c]  # кількість вибухів на клітинці
+                        sum_spot_mult += hits_to_spot_mult(hits)
 
+                    # Загальний множник кластера = 1 + сума спотових
+                    cluster_mult = 1 + sum_spot_mult
+
+                    sym_win = config.paytable[(syms_in_cluster, sym)]
+                    symwin_mult = sym_win * cluster_mult * global_multiplier
+                    total_win += symwin_mult
+
+                    json_positions = [{"reel": p[0], "row": p[1]} for p in cluster]
                     central_pos = Cluster.get_central_cluster_position(json_positions)
+
                     return_data["wins"] += [
                         {
                             "symbol": sym,
@@ -48,13 +64,15 @@ class GameCalculations(Executables):
                             "positions": json_positions,
                             "meta": {
                                 "globalMult": global_multiplier,
-                                "clusterMult": board_mult,
+                                "clusterMult": cluster_mult,
+                                "sumSpotMult": sum_spot_mult,
                                 "winWithoutMult": sym_win,
                                 "overlay": {"reel": central_pos[0], "row": central_pos[1]},
                             },
                         }
                     ]
 
+                    # Позначаємо символи, що вибухнули
                     for positions in cluster:
                         board[positions[0]][positions[1]].explode = True
                         if {

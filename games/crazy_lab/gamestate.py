@@ -11,19 +11,37 @@ class GameState(GameStateOverride):
         while self.repeat:
             # Reset simulation variables and draw a new board based on the betmode criteria.
             self.reset_book()
+
+            # У базовій грі мультики живуть тільки в межах серії тумблів:
+            # 1) Скидаємо сітку перед спіном
+            self.reset_grid_mults()
+
             self.draw_board()
 
+            # Перший підрахунок виграшів
             self.get_clusters_update_wins()
             self.emit_tumble_win_events()
 
+            # 2) Оновлюємо сітку після кожного підрахунку в базі
+            self.update_grid_mults()
+
+            # Продовжуємо тумбли, поки є виграш і не спрацював wincap
             while self.win_data["totalWin"] > 0 and not (self.wincap_triggered):
                 self.tumble_game_board()
                 self.get_clusters_update_wins()
                 self.emit_tumble_win_events()
+                # Оновлення сітки після кожного тумбла
+                self.update_grid_mults()
 
+            # Кінець послідовності тумблів
             self.set_end_tumble_event()
+
+            # 3) Очищаємо сітку після завершення серії тумблів у базі
+            self.reset_grid_mults()
+
             self.win_manager.update_gametype_wins(self.gametype)
 
+            # Перевірка входу у фріспіни
             if self.check_fs_condition() and self.check_freespin_entry():
                 self.run_freespin_from_base()
 
@@ -42,7 +60,9 @@ class GameState(GameStateOverride):
 
             self.get_clusters_update_wins()
             self.emit_tumble_win_events()
+            # У фріспінах мультики персистять, тому оновлюємо їх після кожного підрахунку/тумбла
             self.update_grid_mults()
+
             while self.win_data["totalWin"] > 0 and not (self.wincap_triggered):
                 self.tumble_game_board()
                 self.get_clusters_update_wins()
