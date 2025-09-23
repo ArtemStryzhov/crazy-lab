@@ -17,9 +17,11 @@ if __name__ == "__main__":
     compression = True
     profiling = False
 
+    # додано super_bonus
     num_sim_args = {
         "base": int(1e4),
         "bonus": int(1e4),
+        "super_bonus": int(1e4),
     }
 
     run_conditions = {
@@ -28,7 +30,9 @@ if __name__ == "__main__":
         "run_analysis": True,
         "run_format_checks": True,
     }
-    target_modes = ["base", "bonus"]
+
+    # додано super_bonus
+    target_modes = ["base", "bonus", "super_bonus"]
 
     config = GameConfig()
     gamestate = GameState(config)

@@ -52,11 +52,32 @@ class GameState(GameStateOverride):
 
     def run_freespin(self):
         self.reset_fs_spin()
+
+        # Визначаємо назву режиму надійно: підтримуємо і об'єкт BetMode, і рядок
+        mode_name = None
+        if hasattr(self, "betmode"):
+            bm = self.betmode
+            if hasattr(bm, "get_name"):
+                try:
+                    mode_name = bm.get_name()
+                except Exception:
+                    mode_name = None
+            if mode_name is None and isinstance(bm, str):
+                mode_name = bm
+
+        # Super Buy x500: у режимі 'super_bonus' усі клітинки стартують з hits=2 (тобто x2)
+        if mode_name == "super_bonus":
+            for r in range(self.config.num_reels):
+                for c in range(self.config.num_rows[r]):
+                    self.position_multipliers[r][c] = 2  # hits=2 => x2
+            # Відправляємо подію з оновленою стартовою сіткою ще до першого спіну FS
+            update_grid_mult_event(self)
+
         while self.fs < self.tot_fs:
             self.update_freespin()
             self.draw_board()
             update_grid_mult_event(self)
-            # Apply game-specific actions (i.e special symbol attributes before or after evaluation)
+            # Apply game-specific actions (i.e. special symbol attributes before or after evaluation)
 
             self.get_clusters_update_wins()
             self.emit_tumble_win_events()

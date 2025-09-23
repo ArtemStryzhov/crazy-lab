@@ -92,6 +92,32 @@ class OptimizationSetup:
                     score_type="rtp",
                 ).return_dict(),
             },
+            "super_bonus": {
+                "conditions": {
+                    # розклад RTP для сумісності з BetMode.rtp=0.97
+                    "wincap": ConstructConditions(rtp=0.01, av_win=25000, search_conditions=5000).return_dict(),
+                    "freegame": ConstructConditions(rtp=0.96, hr="x").return_dict(),
+                },
+                "scaling": ConstructScaling(
+                    [
+                        # Можеш змінити під свою цільову криву; зараз копія з bonus з легкими базовими зонами
+                        {"criteria": "freegame", "scale_factor": 0.9, "win_range": (20, 50), "probability": 1.0},
+                        {"criteria": "freegame", "scale_factor": 0.8, "win_range": (1000, 2000), "probability": 1.0},
+                        {"criteria": "freegame", "scale_factor": 1.2, "win_range": (3000, 4000), "probability": 1.0},
+                    ]
+                ).return_dict(),
+                "parameters": ConstructParameters(
+                    num_show=5000,
+                    num_per_fence=10000,
+                    min_m2m=4,
+                    max_m2m=8,
+                    pmb_rtp=1.0,
+                    sim_trials=5000,
+                    test_spins=[10, 20, 50],
+                    test_weights=[0.6, 0.2, 0.2],
+                    score_type="rtp",
+                ).return_dict(),
+            },
         }
 
         verify_optimization_input(self.game_config, self.game_config.opt_params)

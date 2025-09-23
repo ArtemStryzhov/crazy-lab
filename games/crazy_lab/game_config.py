@@ -249,6 +249,64 @@ class GameConfig(Config):
                     ),
                 ],
             ),
+            BetMode(
+                name="super_bonus",
+                cost=500,
+                rtp=self.rtp,  # за потреби можеш завести self.rtp_super = 0.9644 і підлаштувати оптимізацію
+                max_win=self.wincap,
+                auto_close_disabled=False,
+                is_feature=True,
+                is_buybonus=False,
+                distributions=[
+                    Distribution(
+                        criteria="wincap",
+                        quota=0.0001,
+                        win_criteria=self.wincap,
+                        conditions={
+                            "reel_weights": {
+                                self.basegame_type: {"BR0": 1},
+                                self.freegame_type: {"FR0": 1, "WCAP": 5},
+                            },
+                            "mult_values": {
+                                self.basegame_type: {
+                                    2: 10,
+                                    3: 20,
+                                    4: 30,
+                                    5: 20,
+                                    10: 20,
+                                    20: 20,
+                                    50: 10,
+                                },
+                                self.freegame_type: {
+                                    2: 10,
+                                    3: 20,
+                                    4: 30,
+                                    5: 20,
+                                    10: 20,
+                                    20: 20,
+                                    50: 10,
+                                },
+                            },
+                            "scatter_triggers": {4: 1, 5: 2},
+                            "force_wincap": True,
+                            "force_freegame": True,
+                        },
+                    ),
+                    Distribution(
+                        criteria="freegame",
+                        quota=0.01,
+                        conditions={
+                            "reel_weights": {
+                                self.basegame_type: {"BR0": 1},
+                                self.freegame_type: {"FR0": 1},
+                            },
+                            "scatter_triggers": {4: 5, 5: 1},
+                            "force_wincap": False,
+                            "force_freegame": True,
+                        },
+                    ),
+                ],
+            ),
         ]
 
         # Optimisation(rtp, avgWin, hit-rate, recordConditions)
