@@ -3,7 +3,7 @@ from .game_executables import GameExecutables
 
 class GameStateOverride(GameExecutables):
     """
-    This class is is used to override or extend universal state.py functions.
+    This class is used to override or extend universal state.py functions.
     e.g: A specific game may have custom book properties to reset
     """
 
@@ -12,13 +12,20 @@ class GameStateOverride(GameExecutables):
         super().reset_book()
         # Reset parameters relevant to local game only
         self.tumble_win = 0
+        # NEW: reset per-spin collector state (for 'C' symbol aggregation)
+        if hasattr(self, "reset_collector_state"):
+            self.reset_collector_state()
 
     def reset_fs_spin(self):
         super().reset_fs_spin()
         self.reset_grid_mults()
+        # NEW: also reset collector state at the start of each free spin
+        if hasattr(self, "reset_collector_state"):
+            self.reset_collector_state()
 
     def assign_special_sym_function(self):
-        pass
+        # Delegate to GameExecutables implementation (assigns multipliers to 'C')
+        return super().assign_special_sym_function()
 
     def check_repeat(self) -> None:
         """Checks if the spin failed a criteria constraint at any point."""

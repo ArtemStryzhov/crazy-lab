@@ -16,22 +16,32 @@ class GameState(GameStateOverride):
             # 1) Скидаємо сітку перед спіном
             self.reset_grid_mults()
 
+            # Перше розкриття
             self.draw_board()
+            # NEW: призначаємо множники C та збираємо їх у цьому reveal
+            self.assign_special_sym_function()
+            self.collect_collectors_current_reveal()
 
             # Перший підрахунок виграшів
             self.get_clusters_update_wins()
             self.emit_tumble_win_events()
-
             # 2) Оновлюємо сітку після кожного підрахунку в базі
             self.update_grid_mults()
 
             # Продовжуємо тумбли, поки є виграш і не спрацював wincap
             while self.win_data["totalWin"] > 0 and not (self.wincap_triggered):
                 self.tumble_game_board()
+                # NEW: після refill призначити множники C та зібрати їх
+                self.assign_special_sym_function()
+                self.collect_collectors_current_reveal()
+
                 self.get_clusters_update_wins()
                 self.emit_tumble_win_events()
                 # Оновлення сітки після кожного тумбла
                 self.update_grid_mults()
+
+            # Перед завершенням послідовності тумблів — одноразовий підсумок за C-символи
+            self.finalize_collector_payout()
 
             # Кінець послідовності тумблів
             self.set_end_tumble_event()
@@ -75,20 +85,33 @@ class GameState(GameStateOverride):
 
         while self.fs < self.tot_fs:
             self.update_freespin()
+
+            # Перше розкриття цього FS-спіну
             self.draw_board()
             update_grid_mult_event(self)
-            # Apply game-specific actions (i.e. special symbol attributes before or after evaluation)
+            # NEW: призначаємо множники C та збираємо їх у цьому reveal
+            self.assign_special_sym_function()
+            self.collect_collectors_current_reveal()
 
+            # Оцінка виграшів
             self.get_clusters_update_wins()
             self.emit_tumble_win_events()
             # У фріспінах мультики персистять, тому оновлюємо їх після кожного підрахунку/тумбла
             self.update_grid_mults()
 
+            # Тумбли у FS
             while self.win_data["totalWin"] > 0 and not (self.wincap_triggered):
                 self.tumble_game_board()
+                # NEW: після refill призначити множники C та зібрати їх
+                self.assign_special_sym_function()
+                self.collect_collectors_current_reveal()
+
                 self.get_clusters_update_wins()
                 self.emit_tumble_win_events()
                 self.update_grid_mults()
+
+            # Перед завершенням послідовності тумблів у цьому FS-спіні — одноразовий підсумок за C-символи
+            self.finalize_collector_payout()
 
             self.set_end_tumble_event()
             self.win_manager.update_gametype_wins(self.gametype)

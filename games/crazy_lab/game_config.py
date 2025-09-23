@@ -114,7 +114,13 @@ class GameConfig(Config):
         self.paytable = self.convert_range_table(pay_group)
 
         self.include_padding = True
-        self.special_symbols = {"scatter": ["S"]}
+        self.special_symbols = {"scatter": ["S"], "collector": ["C"]}
+
+        # розподіли множників для 'C' (колектора): ключі — значення множника, значення — ваги
+        self.collector_values = {
+            self.basegame_type: {2: 40, 3: 30, 5: 20, 10: 8, 25: 1, 50: 1},
+            self.freegame_type: {2: 30, 3: 25, 5: 20, 10: 15, 25: 7, 50: 3},
+        }
 
         self.freespin_triggers = {
             self.basegame_type: {3: 10, 4: 12, 5: 15, 6: 20, 7: 30},
